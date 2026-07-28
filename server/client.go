@@ -13,6 +13,7 @@ const writeWait = 5 * time.Second
 type Client struct {
 	conn    *websocket.Conn
 	writeMu sync.Mutex
+	logger  *Logger
 
 	ip string
 
@@ -20,16 +21,18 @@ type Client struct {
 	username string
 }
 
-func newClient(conn *websocket.Conn, ip string) *Client {
-	return &Client{conn: conn, ip: ip}
+func newClient(conn *websocket.Conn, ip string, logger *Logger) *Client {
+	return &Client{conn: conn, ip: ip, logger: logger}
 }
 
-// send writes a text frame to the client. Errors are swallowed.
+// send writes a text frame to the client. Errors are logged and swallowed.
 func (c *Client) send(data []byte) {
 	c.writeMu.Lock()
 	defer c.writeMu.Unlock()
 	_ = c.conn.SetWriteDeadline(time.Now().Add(writeWait))
-	_ = c.conn.WriteMessage(websocket.TextMessage, data)
+	if err := c.conn.WriteMessage(websocket.TextMessage, data); err != nil {
+		c.logger.Connection("write to %s failed: %v", c.ip, err)
+	}
 }
 
 // closeWithCode sends a WebSocket close frame with the given status code
@@ -38,7 +41,9 @@ func (c *Client) closeWithCode(code int, reason string) {
 	c.writeMu.Lock()
 	msg := websocket.FormatCloseMessage(code, reason)
 	_ = c.conn.SetWriteDeadline(time.Now().Add(writeWait))
-	_ = c.conn.WriteControl(websocket.CloseMessage, msg, time.Now().Add(writeWait))
+	if err := c.conn.WriteControl(websocket.CloseMessage, msg, time.Now().Add(writeWait)); err != nil {
+		c.logger.Connection("close handshake with %s failed: %v", c.ip, err)
+	}
 	c.writeMu.Unlock()
 	_ = c.conn.Close()
 }
