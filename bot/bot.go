@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/OmniBlocks/OmniBlocksCloudServer/server"
 	"github.com/gorilla/websocket"
 )
 
@@ -31,7 +32,7 @@ type Bot struct {
 	config Config
 
 	mu           sync.RWMutex
-	conn         *websocket.Conn
+	conn         *server.Conn
 	connected    bool
 	closed       bool
 	variables    map[string]any
@@ -179,13 +180,16 @@ func (b *Bot) runConnectionLoop() {
 	}
 }
 
-func (b *Bot) dial() (*websocket.Conn, error) {
+func (b *Bot) dial() (*server.Conn, error) {
 	headers := http.Header{}
 	if b.config.UserAgent != "" {
 		headers.Set("User-Agent", b.config.UserAgent)
 	}
 	conn, _, err := websocket.DefaultDialer.Dial(b.config.CloudHost, headers)
-	return conn, err
+	if err != nil {
+		return nil, err
+	}
+	return server.NewConn(conn), nil
 }
 
 func (b *Bot) sendHandshake() error {
@@ -200,7 +204,7 @@ func (b *Bot) sendHandshake() error {
 	if b.conn == nil {
 		return errors.New("not connected")
 	}
-	return b.conn.WriteMessage(websocket.TextMessage, data)
+	return b.conn.Send(data)
 }
 
 func (b *Bot) flushQueue() {
@@ -210,7 +214,7 @@ func (b *Bot) flushQueue() {
 		return
 	}
 	for _, item := range b.sendQueue {
-		_ = b.conn.WriteMessage(websocket.TextMessage, []byte(item))
+		_ = b.conn.Send([]byte(item))
 	}
 	b.sendQueue = nil
 }
@@ -299,7 +303,7 @@ func (b *Bot) Set(name string, value any) {
 	msgBytes, _ := json.Marshal(msg)
 
 	if b.conn != nil && b.connected {
-		_ = b.conn.WriteMessage(websocket.TextMessage, msgBytes)
+		_ = b.conn.Send(msgBytes)
 	} else {
 		b.sendQueue = append(b.sendQueue, string(msgBytes))
 	}

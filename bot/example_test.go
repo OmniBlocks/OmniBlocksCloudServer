@@ -1,18 +1,4 @@
-# OmniBlocks Bot Library
-
-A lightweight, event-driven Go client library for interacting with OmniBlocks cloud variable servers.
-
-## Features
-
-- Event-driven API
-- Automatic Reconnection
-- Strict Validation and Normalization
-- Queued Writes
-
-## Usage Example
-
-```go
-package main
+package bot_test
 
 import (
 	"fmt"
@@ -21,7 +7,7 @@ import (
 	"github.com/OmniBlocks/OmniBlocksCloudServer/bot"
 )
 
-func main() {
+func ExampleBot() {
 	client, err := bot.New(bot.Config{
 		ProjectID: "1141249869",
 		Username:  "boxy",
@@ -48,8 +34,3 @@ func main() {
 	time.Sleep(50 * time.Millisecond)
 	client.Close()
 }
-```
-
-## License
-
-MPL-2.0. See [LICENSE](./LICENSE).
