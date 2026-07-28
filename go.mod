@@ -1,6 +1,6 @@
 module github.com/OmniBlocks/OmniBlocksCloudServer
 
-go 1.26.3
+go 1.25.10
 
 require github.com/gorilla/websocket v1.5.3
 
