@@ -4,13 +4,20 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/OmniBlocks/OmniBlocksCloudServer/server"
 )
 
-const addr = ":9080"
+const configPath = "config.toml"
 
 func main() {
+	cfg, err := server.LoadConfig(configPath)
+	if err != nil {
+		log.Fatalf("failed to load config %q: %v", configPath, err)
+	}
+
+	addr := ":" + strconv.Itoa(cfg.Port)
 	fmt.Println("WebSocket Server started on " + addr)
 
 	s := server.New()

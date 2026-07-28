@@ -1,0 +1,5 @@
+# Server configuration.
+# This file is optional so any missing or omitted value falls back to its default.
+
+# Port the WebSocket server listens on.
+port = 9080
