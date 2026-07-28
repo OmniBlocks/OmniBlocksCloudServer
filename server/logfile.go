@@ -81,12 +81,15 @@ func (rf *rotatingFile) rotate() error {
 
 	backupName := fmt.Sprintf("log-%s.gz", time.Now().Format("20060102-150405.000000"))
 	if err := compressFile(rf.currentPath(), filepath.Join(rf.dir, backupName)); err != nil {
+		_ = rf.open()
 		return err
 	}
 	if err := os.Remove(rf.currentPath()); err != nil {
+		_ = rf.open()
 		return err
 	}
 	if err := rf.pruneBackups(); err != nil {
+		_ = rf.open()
 		return err
 	}
 
