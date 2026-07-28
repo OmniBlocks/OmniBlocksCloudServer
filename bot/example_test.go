@@ -19,7 +19,7 @@ func ExampleBot() {
 	}
 
 	client.On("connected", func() {
-		fmt.Println("Connected to OmniBlocks cloud server!")
+		fmt.Println("Connected to cloud server!")
 	})
 
 	client.On("set", func(name string, value any) {
@@ -29,7 +29,7 @@ func ExampleBot() {
 	client.Connect()
 
 	// Update variable
-	client.Set("score", 100)
+	client.Set("CLOUD 1", 01100010)
 
 	time.Sleep(50 * time.Millisecond)
 	client.Close()
