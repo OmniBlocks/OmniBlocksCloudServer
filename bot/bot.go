@@ -14,7 +14,7 @@ import (
 const (
 	CloudPrefixEmoji = "☁ "
 	CloudPrefixText  = ":cloud: "
-	DefaultCloudHost = "wss://clouddata.omniblocks.com"
+	DefaultCloudHost = "ws://127.0.0.1:9080"
 	DefaultUsername  = "player"
 )
 
@@ -26,7 +26,7 @@ type Config struct {
 	UserAgent string
 }
 
-// Bot represents a lightweight cloud variable bot client (akin to TurboWarp's Mist).
+// Bot represents a lightweight cloud variable bot client.
 type Bot struct {
 	config Config
 
@@ -233,8 +233,8 @@ func (b *Bot) readLoop() error {
 }
 
 func (b *Bot) handleIncomingData(data []byte) {
-	lines := strings.Split(string(data), "\n")
-	for _, line := range lines {
+	lines := strings.SplitSeq(string(data), "\n")
+	for line := range lines {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue
@@ -281,7 +281,7 @@ func (b *Bot) Get(name string) any {
 // Set updates or creates a cloud variable.
 func (b *Bot) Set(name string, value any) {
 	normalized := normalizeName(name)
-	
+
 	valBytes, err := json.Marshal(value)
 	if err != nil {
 		return
