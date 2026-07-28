@@ -1,13 +1,13 @@
-# OmniBlocks Bot Library (`bot`)
+# OmniBlocks Bot Library
 
-A lightweight, event-driven Go client library for interacting with OmniBlocks cloud variable servers (akin to TurboWarp's Mist).
+A lightweight, event-driven Go client library for interacting with OmniBlocks cloud variable servers.
 
 ## Features
 
-- **Event-driven API**: Easily listen for `connected`, `reconnecting`, `set`, and `error` events.
-- **Automatic Reconnection**: Robust reconnection loop with exponential backoff if the server restarts or connection drops.
-- **Strict Validation & Normalization**: Automatically prepends cloud prefixes (`☁ ` or `:cloud:`) if omitted and correctly serializes payloads.
-- **Queued Writes**: Supports calling `Set()` before the connection is established; writes are queued and flushed upon successful handshake.
+- Event-driven API
+- Automatic Reconnection
+- Strict Validation and Normalization
+- Queued Writes
 
 ## Usage Example
 
@@ -25,8 +25,8 @@ func main() {
 	client, err := bot.New(bot.Config{
 		ProjectID: "12345",
 		Username:  "myBot",
-		CloudHost: "wss://clouddata.omniblocks.com",
-		UserAgent: "MyAwesomeBot/1.0 (contact@example.com)",
+		CloudHost: "ws://127.0.0.1:9080",
+		UserAgent: "BoxyScraper/1.0 (contact@boxy.com)",
 	})
 	if err != nil {
 		panic(err)
@@ -64,4 +64,4 @@ func main() {
 
 ## License
 
-Mozilla Public License 2.0 (MPL-2.0).
+MPL-2.0. See [LICENSE](./LICENSE).
