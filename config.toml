@@ -3,3 +3,31 @@
 
 # Port the WebSocket server listens on.
 port = 9080
+
+[logging]
+# Master switch for all diagnostic logging. When false, nothing below matters.
+enabled = true
+# Colorize console log lines by category (has no effect on the log file).
+color = true
+
+# Each part of the system can be logged independently. Everything defaults to true.
+[logging.categories]
+server = true
+config = true
+connection = true
+handshake = true
+messages = true
+variables = true
+rooms = true 
+broadcast = true
+errors = true
+
+# gzip compressed file logging in addition to the console.
+[logging.file]
+enabled = false
+# Directory the log files are written to
+directory = "logs"
+# current.log is rotated and compressed once it exceeds this size.
+max_size_mb = 10
+# Number of compressed backups to keep, so the oldest are deleted beyond this.
+max_backups = 5

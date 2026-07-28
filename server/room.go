@@ -5,6 +5,7 @@ import (
 	"sync"
 )
 
+// 128 should be plenty
 const (
 	maxClientsPerRoom   = 128
 	maxVariablesPerRoom = 128
@@ -13,7 +14,8 @@ const (
 // Room holds the cloud variables and connected clients for a single
 // project ID.
 type Room struct {
-	id string
+	id     string
+	logger *Logger
 
 	mu        sync.Mutex
 	variables map[string]json.RawMessage
@@ -21,9 +23,10 @@ type Room struct {
 	clients   map[*Client]struct{}
 }
 
-func newRoom(id string) *Room {
+func newRoom(id string, logger *Logger) *Room {
 	return &Room{
 		id:        id,
+		logger:    logger,
 		variables: make(map[string]json.RawMessage),
 		clients:   make(map[*Client]struct{}),
 	}
@@ -33,9 +36,11 @@ func (r *Room) addClient(c *Client) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if len(r.clients) >= maxClientsPerRoom {
+		r.logger.Rooms("room %q full: refusing client %s", r.id, c.ip)
 		return errRoomFull
 	}
 	r.clients[c] = struct{}{}
+	r.logger.Rooms("room %q now has %d client(s)", r.id, len(r.clients))
 	return nil
 }
 
@@ -43,6 +48,7 @@ func (r *Room) removeClient(c *Client) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	delete(r.clients, c)
+	r.logger.Rooms("room %q now has %d client(s)", r.id, len(r.clients))
 }
 
 func (r *Room) clientCount() int {
@@ -130,6 +136,8 @@ func (r *Room) broadcastExcept(sender *Client, payload []byte) {
 		}
 	}
 	r.mu.Unlock()
+
+	r.logger.Broadcast("room %q: broadcasting %d byte(s) to %d client(s)", r.id, len(payload), len(targets))
 
 	for _, c := range targets {
 		c.send(payload)
