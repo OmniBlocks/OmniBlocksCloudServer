@@ -21,11 +21,11 @@ import (
 	"github.com/OmniBlocks/OmniBlocksCloudServer/bot"
 )
 
-func main() {
+func ExampleBot() {
 	client, err := bot.New(bot.Config{
 		ProjectID: "1141249869",
 		Username:  "boxy",
-		CloudHost: "ws://127.0.0.1:9080",
+		CloudHost: "ws://localhost:9080",
 		UserAgent: "BoxyScraper/1.0 (aipoweredtools@boxy.com)",
 	})
 	if err != nil {
@@ -33,31 +33,19 @@ func main() {
 	}
 
 	client.On("connected", func() {
-		fmt.Println("Connected!")
-	})
-
-	client.On("reconnecting", func() {
-		fmt.Println("Connection lost, reconnecting...")
+		fmt.Println("Connected to cloud server!")
 	})
 
 	client.On("set", func(name string, value any) {
-		fmt.Printf("Variable %s was set to %v\n", name, value)
-	})
-
-	client.On("error", func(err error) {
-		fmt.Printf("Error: %v\n", err)
+		fmt.Printf("Variable %s set to %v\n", name, value)
 	})
 
 	client.Connect()
 
-	// Set variable (queued if not yet connected)
-	client.Set("score", 10)
+	// Update variable
+	client.Set("CLOUD 1", 01100010)
 
-	// Get cached variable value
-	val := client.Get("score")
-	fmt.Printf("Current score value: %v\n", val)
-
-	time.Sleep(10 * time.Second)
+	time.Sleep(50 * time.Millisecond)
 	client.Close()
 }
 ```
