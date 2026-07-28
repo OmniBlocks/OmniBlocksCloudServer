@@ -23,10 +23,10 @@ import (
 
 func main() {
 	client, err := bot.New(bot.Config{
-		ProjectID: "12345",
-		Username:  "myBot",
+		ProjectID: "1141249869",
+		Username:  "boxy",
 		CloudHost: "ws://127.0.0.1:9080",
-		UserAgent: "BoxyScraper/1.0 (contact@boxy.com)",
+		UserAgent: "BoxyScraper/1.0 (aipoweredtools@boxy.com)",
 	})
 	if err != nil {
 		panic(err)

@@ -9,10 +9,10 @@ import (
 
 func ExampleBot() {
 	client, err := bot.New(bot.Config{
-		ProjectID: "99999",
-		Username:  "exampleBot",
-		CloudHost: "wss://clouddata.omniblocks.com",
-		UserAgent: "MyBot/1.0 (contact@example.com)",
+		ProjectID: "1141249869",
+		Username:  "boxy",
+		CloudHost: "ws://localhost:9080",
+		UserAgent: "BoxyScraper/1.0 (aipoweredtools@boxy.com)",
 	})
 	if err != nil {
 		panic(err)
