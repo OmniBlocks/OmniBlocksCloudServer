@@ -1,2 +1,2 @@
 # OmniBlocksCloudServer
-Scratch-compatible cloud server written in Go.
+[A cloud server](./server/README.md) and [a bot library](./bot/README.md).
