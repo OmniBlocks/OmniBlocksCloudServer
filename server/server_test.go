@@ -20,8 +20,7 @@ type testClient struct {
 
 func newTestServer(t *testing.T) *httptest.Server {
 	t.Helper()
-	s := New()
-	s.Logf = func(string, ...any) {} // silence during tests
+	s := New(NewDiscardLogger())
 	ts := httptest.NewServer(s)
 	t.Cleanup(ts.Close)
 	return ts

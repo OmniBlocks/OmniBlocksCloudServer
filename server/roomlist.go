@@ -7,12 +7,13 @@ const maxRooms = 16384
 
 // RoomList tracks all active rooms, keyed by project ID.
 type RoomList struct {
-	mu    sync.Mutex
-	rooms map[string]*Room
+	mu     sync.Mutex
+	rooms  map[string]*Room
+	logger *Logger
 }
 
-func newRoomList() *RoomList {
-	return &RoomList{rooms: make(map[string]*Room)}
+func newRoomList(logger *Logger) *RoomList {
+	return &RoomList{rooms: make(map[string]*Room), logger: logger}
 }
 
 func (rl *RoomList) getOrCreate(id string) (*Room, error) {
@@ -22,10 +23,12 @@ func (rl *RoomList) getOrCreate(id string) (*Room, error) {
 		return room, nil
 	}
 	if len(rl.rooms) >= maxRooms {
+		rl.logger.Rooms("cannot create room %q: room limit (%d) reached", id, maxRooms)
 		return nil, errTooManyRooms
 	}
-	room := newRoom(id)
+	room := newRoom(id, rl.logger)
 	rl.rooms[id] = room
+	rl.logger.Rooms("created room %q (%d active room(s))", id, len(rl.rooms))
 	return room, nil
 }
 
@@ -40,5 +43,6 @@ func (rl *RoomList) removeIfEmpty(id string) {
 	}
 	if room.clientCount() == 0 {
 		delete(rl.rooms, id)
+		rl.logger.Rooms("removed empty room %q (%d active room(s))", id, len(rl.rooms))
 	}
 }
