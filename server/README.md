@@ -2,4 +2,4 @@
 Scratch-compatible cloud server written in Go.
 
 ## License
-BSD 3-Clause Revised. See [LICENSE](./LICENSE).
+AGPL-3.0-only. See [LICENSE](./LICENSE).
